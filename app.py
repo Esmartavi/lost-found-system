@@ -38,6 +38,28 @@ login_manager.login_view = 'login'
 
 os.makedirs(os.path.join('static', 'images'), exist_ok=True)
 
+# ── Seed default categories if none exist ──────────────────────────────────────
+DEFAULT_CATEGORIES = [
+    'Electronics', 'Books & Stationery', 'Clothing & Accessories',
+    'ID & Documents', 'Keys', 'Wallet & Purse', 'Bag & Backpack',
+    'Water Bottle', 'Jewellery', 'Sports Equipment', 'Other'
+]
+
+def seed_categories():
+    """Insert default categories into MongoDB if the collection is empty."""
+    with app.app_context():
+        try:
+            if mongo.db.categories.count_documents({}) == 0:
+                mongo.db.categories.insert_many(
+                    [{'name': c} for c in DEFAULT_CATEGORIES]
+                )
+                print('✅ Default categories seeded.')
+        except Exception as e:
+            print(f'Category seed error: {e}')
+
+seed_categories()
+
+
 # ── Helpers ────────────────────────────────────────────────────────────────────
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg','jpeg','png','gif','webp'}
