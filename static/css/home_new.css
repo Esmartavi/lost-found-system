@@ -96,16 +96,60 @@ body { background:#0b0b22 !important; }
 
 /* TESTIMONIALS */
 .h-test { background:#0b0b22; padding:6rem 2rem; }
-.test-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; max-width:1100px; margin:2rem auto 0; }
-@media(max-width:900px) { .test-grid { grid-template-columns:repeat(2,1fr); } }
-@media(max-width:540px) { .test-grid { grid-template-columns:1fr; } }
-.tc { background:#1a1a3e; border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:1.5rem; }
+
+/* Horizontal scroll wrapper */
+.test-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 1.5rem 0 1.5rem;
+  /* custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(108,99,255,.5) rgba(255,255,255,.05);
+}
+.test-scroll-wrap::-webkit-scrollbar { height: 6px; }
+.test-scroll-wrap::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 10px; }
+.test-scroll-wrap::-webkit-scrollbar-thumb { background: rgba(108,99,255,.5); border-radius: 10px; }
+.test-scroll-wrap::-webkit-scrollbar-thumb:hover { background: rgba(108,99,255,.8); }
+
+.test-scroll {
+  display: flex;
+  gap: 1.25rem;
+  padding: 0.25rem 1rem;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.tc {
+  background:#1a1a3e;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;
+  padding:1.5rem;
+  width: 280px;
+  flex-shrink: 0;
+  transition: all .28s;
+}
+.tc:hover { border-color:rgba(108,99,255,.3); transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.4); }
 .tc .stars { color:#f0c060; font-size:.82rem; margin-bottom:.9rem; letter-spacing:2px; }
 .tc p { font-size:.82rem; color:rgba(255,255,255,.55); line-height:1.7; margin-bottom:1.1rem; }
 .tc .ta { display:flex; align-items:center; gap:.7rem; }
-.tc .ta img { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(108,99,255,.35); }
 .tc .ta .tn { font-weight:700; color:#fff; font-size:.85rem; }
 .tc .ta .ts { color:rgba(255,255,255,.35); font-size:.72rem; }
+
+/* Avatar circle with initial letter */
+.tc-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#6c63ff,#a78bfa);
+  color: #fff;
+  font-weight: 800;
+  font-size: .95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(108,99,255,.4);
+}
 
 /* FAQ */
 .h-faq { background:#0d0d28; padding:6rem 2rem; }

@@ -379,9 +379,14 @@ def home_page():
                     last = num
 
     pagination = Pagination(page, per_page, total)
+
+    # Fetch real feedback — newest first, for the "What Students Say" section
+    feedbacks = list(mongo.db.feedback.find().sort('created_at', -1))
+
     return render_template('home.html', items=items, categories=categories,
                            pagination=pagination, search_term=search_term,
-                           category_id=category_id, status_filter=status_filter)
+                           category_id=category_id, status_filter=status_filter,
+                           feedbacks=feedbacks)
 
 @app.route('/add_item', methods=['GET', 'POST'])
 @login_required

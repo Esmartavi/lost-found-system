@@ -129,13 +129,40 @@
     <div class="sec-pill">⭐ Student Reviews</div>
     <div class="sec-title">What Students <span>Say</span></div>
   </div>
-  <div class="test-grid">
-    <div class="tc"><div class="stars">★★★★★</div><p>"Found my laptop bag within 2 hours! The notification was instant and the person returned it same day."</p><div class="ta"><img src="{{ url_for('static', filename='images/default.jpg') }}"><div><div class="tn">Rahul Sharma</div><div class="ts">CSE · 2nd Year</div></div></div></div>
-    <div class="tc"><div class="stars">★★★★★</div><p>"I found someone's ID card near the library. Posted it and the owner claimed it within an hour!"</p><div class="ta"><img src="{{ url_for('static', filename='images/default.jpg') }}"><div><div class="tn">Priya Singh</div><div class="ts">ECE · 3rd Year</div></div></div></div>
-    <div class="tc"><div class="stars">★★★★★</div><p>"This platform saved me. Lost my wallet and found it back within a day. Absolutely incredible!"</p><div class="ta"><img src="{{ url_for('static', filename='images/default.jpg') }}"><div><div class="tn">Minas R. Piriton</div><div class="ts">MECH · 1st Year</div></div></div></div>
-    <div class="tc"><div class="stars">★★★★☆</div><p>"A student returned my calculator through this system. Really trustworthy platform on campus."</p><div class="ta"><img src="{{ url_for('static', filename='images/default.jpg') }}"><div><div class="tn">Sidhant Jain</div><div class="ts">Civil · 4th Year</div></div></div></div>
+
+  {% if feedbacks %}
+  <div class="test-scroll-wrap">
+    <div class="test-scroll">
+      {% for fb in feedbacks %}
+      <div class="tc">
+        <div class="stars">
+          {% for i in range(fb.rating|int) %}★{% endfor %}{% for i in range(5 - fb.rating|int) %}☆{% endfor %}
+        </div>
+        <p>"{{ fb.message[:120] }}{% if fb.message|length > 120 %}…{% endif %}"</p>
+        <div class="ta">
+          <div class="tc-avatar">{{ fb.name[0]|upper }}</div>
+          <div>
+            <div class="tn">{{ fb.name }}</div>
+            <div class="ts">{{ fb.category }} · {{ fb.created_at.strftime('%d %b %Y') if fb.created_at else '' }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
+  {% else %}
+  <!-- Fallback static cards if no feedback yet -->
+  <div class="test-scroll-wrap">
+    <div class="test-scroll">
+      <div class="tc"><div class="stars">★★★★★</div><p>"Found my laptop bag within 2 hours! The notification was instant and the person returned it same day."</p><div class="ta"><div class="tc-avatar">R</div><div><div class="tn">Rahul Sharma</div><div class="ts">CSE · 2nd Year</div></div></div></div>
+      <div class="tc"><div class="stars">★★★★★</div><p>"I found someone's ID card near the library. Posted it and the owner claimed it within an hour!"</p><div class="ta"><div class="tc-avatar">P</div><div><div class="tn">Priya Singh</div><div class="ts">ECE · 3rd Year</div></div></div></div>
+      <div class="tc"><div class="stars">★★★★★</div><p>"This platform saved me. Lost my wallet and found it back within a day. Absolutely incredible!"</p><div class="ta"><div class="tc-avatar">M</div><div><div class="tn">Minas R. Piriton</div><div class="ts">MECH · 1st Year</div></div></div></div>
+      <div class="tc"><div class="stars">★★★★☆</div><p>"A student returned my calculator through this system. Really trustworthy platform on campus."</p><div class="ta"><div class="tc-avatar">S</div><div><div class="tn">Sidhant Jain</div><div class="ts">Civil · 4th Year</div></div></div></div>
+    </div>
+  </div>
+  {% endif %}
 </div>
+
 
 <!-- FAQ -->
 <div class="fw h-faq">
