@@ -120,7 +120,7 @@
 
         {% if user.profile_pic %}
         <div class="current-pic-wrap">
-            <img src="{{ url_for('static', filename='images/' + user.profile_pic) }}"
+            <img src="{{ img_url(user.profile_pic) }}"
                  alt="Current Profile Picture">
             <div class="pic-info">
                 <strong>Current Photo</strong>

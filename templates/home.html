@@ -58,7 +58,7 @@
     {% for item in items %}
     <div class="icard">
       <div class="img-w">
-        <img src="{{ url_for('static', filename='images/' + item.image_file) }}" alt="{{ item.name }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+        <img src="{{ img_url(item.image_file) }}" alt="{{ item.name }}" onerror="this.onerror=null;this.src='{{ img_url('default.jpg') }}'">
         <div class="ov"></div>
         <span class="stag {{ item.status|lower }}">{{ item.status }}</span>
         <span class="new-tag">NEW</span>
@@ -70,7 +70,7 @@
         <div class="foot">
           <div class="ua">
             {% if item.owner %}
-            <img src="{{ url_for('static', filename='images/' + (item.owner.profile_pic if item.owner.profile_pic and item.owner.profile_pic != 'None' else 'default.jpg')) }}" onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+            <img src="{{ img_url(item.owner.profile_pic) }}" onerror="this.src='{{ img_url('default.jpg') }}'">
             <span>{{ item.owner.first_name }}</span>
             {% endif %}
           </div>

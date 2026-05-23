@@ -76,7 +76,7 @@
             {% if item.image_file and item.image_file != 'default.jpg' %}
             <div style="margin-bottom:.75rem;">
                 <small style="display:block; margin-bottom:.4rem;">Current image:</small>
-                <img src="{{ url_for('static', filename='images/' + item.image_file) }}"
+                <img src="{{ img_url(item.image_file) }}"
                      alt="{{ item.name }}" class="preview-img">
             </div>
             {% endif %}

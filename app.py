@@ -1,4 +1,6 @@
 import os
+import cloudinary
+import cloudinary.uploader
 from flask import Flask, render_template, redirect, url_for, flash, request, session, abort
 from flask_bcrypt import Bcrypt
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
@@ -17,6 +19,13 @@ app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', 
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI', 'mongodb+srv://kishan9798760468_db_user:joGeYTKH1bfd9neF@cluster0.nro9z2t.mongodb.net/lost_found_db?appName=Cluster0')
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+# Cloudinary config for persistent image storage
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    api_key    = os.environ.get('CLOUDINARY_API_KEY', ''),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET', ''),
+    secure     = True
+)
 # Brevo API for email delivery — 300 free emails/day to ANY email
 BREVO_API_KEY    = os.environ.get('BREVO_API_KEY', '')
 BREVO_FROM_EMAIL = os.environ.get('BREVO_FROM_EMAIL', '')
@@ -32,6 +41,20 @@ os.makedirs(os.path.join('static', 'images'), exist_ok=True)
 # ── Helpers ────────────────────────────────────────────────────────────────────
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg','jpeg','png','gif','webp'}
+
+def upload_to_cloudinary(file_storage, folder='lost_found'):
+    """Upload a file to Cloudinary and return the secure URL. Returns None on failure."""
+    try:
+        result = cloudinary.uploader.upload(
+            file_storage,
+            folder=folder,
+            resource_type='image',
+            transformation=[{'quality': 'auto', 'fetch_format': 'auto'}]
+        )
+        return result.get('secure_url')
+    except Exception as e:
+        print(f'Cloudinary upload error: {e}')
+        return None
 
 def get_object_id(id_str):
     try:
@@ -89,12 +112,23 @@ def load_user(user_id):
     return User(doc) if doc else None
 
 @app.context_processor
-def inject_notification_count():
+def inject_globals():
     if current_user.is_authenticated:
         count = mongo.db.notifications.count_documents({'user_id': current_user.id})
     else:
         count = 0
-    return dict(notification_count=count, now=datetime.utcnow())
+
+    def img_url(filename):
+        """Return a usable image URL for both Cloudinary URLs and legacy local filenames."""
+        if not filename or filename in ('None', 'default.jpg', ''):
+            from flask import url_for as _url_for
+            return _url_for('static', filename='images/default.jpg')
+        if filename.startswith('http://') or filename.startswith('https://'):
+            return filename   # already a Cloudinary URL
+        from flask import url_for as _url_for
+        return _url_for('static', filename='images/' + filename)
+
+    return dict(notification_count=count, now=datetime.utcnow(), img_url=img_url)
 
 def generate_otp():
     return f"{random.randint(100000, 999999)}"
@@ -418,8 +452,11 @@ def add_item():
             if not allowed_file(image.filename):
                 flash('Only image files (JPG, PNG, GIF, WEBP) are allowed.', 'danger')
                 return redirect(url_for('add_item'))
-            image_filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+            url = upload_to_cloudinary(image, folder='lost_found/items')
+            if url:
+                image_filename = url
+            else:
+                flash('Image upload failed. Item saved without image.', 'warning')
 
         result = mongo.db.items.insert_one({
             'name': name, 'description': description,
@@ -474,9 +511,11 @@ def edit_item(item_id):
             if not allowed_file(image_file.filename):
                 flash('Only image files (JPG, PNG, GIF, WEBP) are allowed.', 'danger')
                 return redirect(url_for('edit_item', item_id=item_id))
-            fn = secure_filename(image_file.filename)
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], fn))
-            update['image_file'] = fn
+            url = upload_to_cloudinary(image_file, folder='lost_found/items')
+            if url:
+                update['image_file'] = url
+            else:
+                flash('Image upload failed. Previous image kept.', 'warning')
 
         mongo.db.items.update_one({'_id': ObjectId(item_id)}, {'$set': update})
         flash('Item updated successfully.', 'success')
@@ -575,9 +614,11 @@ def update_profile():
         if 'profile_pic' in request.files:
             file = request.files['profile_pic']
             if file and file.filename and allowed_file(file.filename):
-                fn = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], fn))
-                update['profile_pic'] = fn
+                url = upload_to_cloudinary(file, folder='lost_found/profiles')
+                if url:
+                    update['profile_pic'] = url
+                else:
+                    flash('Profile picture upload failed.', 'warning')
 
         mongo.db.users.update_one({'_id': ObjectId(current_user.id)}, {'$set': update})
         flash('Profile updated successfully.', 'success')

@@ -88,10 +88,10 @@
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
                        id="navbarDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
-                        <img src="{{ url_for('static', filename='images/' + (current_user.profile_pic if current_user.profile_pic and current_user.profile_pic != 'None' else 'default.jpg')) }}"
+                        <img src="{{ img_url(current_user.profile_pic) }}"
                              alt="Profile" class="rounded-circle mr-2"
                              width="32" height="32" style="object-fit:cover; border:2px solid #6c63ff;"
-                             onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+                             onerror="this.src='{{ img_url('default.jpg') }}'">
                         <span style="color: var(--text-primary); font-weight:600; font-size:0.9rem;">
                             {{ current_user.first_name }}
                         </span>

@@ -37,9 +37,9 @@
     <div class="profile-sidebar">
         <div class="profile-avatar-wrap">
             <div class="profile-avatar-ring"></div>
-            <img src="{{ url_for('static', filename='images/' + (current_user.profile_pic if current_user.profile_pic and current_user.profile_pic != 'None' else 'default.jpg')) }}"
+            <img src="{{ img_url(current_user.profile_pic) }}"
                  alt="Profile Picture"
-                 onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+                 onerror="this.src='{{ img_url('default.jpg') }}'">
         </div>
         <div class="profile-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
         <div class="profile-role">{{ current_user.course }} · {{ current_user.branch }}</div>

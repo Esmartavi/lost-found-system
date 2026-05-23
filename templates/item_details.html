@@ -48,7 +48,7 @@
 <div class="detail-grid">
     <!-- Image -->
     <div class="detail-img-wrap">
-        <img src="{{ url_for('static', filename='images/' + item.image_file) }}" alt="{{ item.name }}">
+        <img src="{{ img_url(item.image_file) }}" alt="{{ item.name }}">
     </div>
 
     <!-- Info Panel -->
@@ -113,10 +113,10 @@
             <div>
                 <div class="d-key">Reported By</div>
                 <div class="d-val" style="display:flex; align-items:center; gap:.6rem;">
-                    <img src="{{ url_for('static', filename='images/' + (item.owner.profile_pic if item.owner.profile_pic and item.owner.profile_pic != 'None' else 'default.jpg')) }}"
+                    <img src="{{ img_url(item.owner.profile_pic) }}"
                          alt="" width="26" height="26"
                          style="border-radius:50%; object-fit:cover; border:1px solid rgba(108,99,255,.35);"
-                         onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+                         onerror="this.src='{{ img_url('default.jpg') }}'">
                     {{ item.owner.first_name }} {{ item.owner.last_name }}
                 </div>
             </div>
@@ -211,10 +211,10 @@
                     {% endif %}
                 </div>
                 <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap;">
-                    <img src="{{ url_for('static', filename='images/' + (claimer.profile_pic if claimer.profile_pic and claimer.profile_pic != 'None' else 'default.jpg')) }}"
+                    <img src="{{ img_url(claimer.profile_pic) }}"
                          width="38" height="38"
                          style="border-radius:50%; object-fit:cover; border:2px solid rgba(48,213,200,.4);"
-                         onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
+                         onerror="this.src='{{ img_url('default.jpg') }}'">
                     <div>
                         <div style="font-weight:700; color:var(--text-primary); font-size:.95rem;">
                             {{ claimer.first_name }} {{ claimer.last_name }}
